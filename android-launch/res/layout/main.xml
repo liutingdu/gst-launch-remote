@@ -60,7 +60,7 @@
             android:indeterminate="false" />
     </LinearLayout>
 
-    <com.centricular.android_launch.GStreamerSurfaceView
+    <com.centricular.androidlaunch.GStreamerSurfaceView
         android:id="@+id/surface_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

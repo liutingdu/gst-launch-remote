@@ -18,7 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-package com.centricular.android_launch;
+package com.centricular.androidlaunch;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,10 +41,13 @@ import android.widget.Toast;
 
 import org.freedesktop.gstreamer.GStreamer;
 
+import com.centricular.androidlaunch.R;
+
 public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, OnSeekBarChangeListener {
     private native void nativeInit();
     private native void nativeFinalize();
     private native void nativePlay();
+    private native void nativeSetPipeline(String pipelineString);
     private native void nativePause();
     private native void nativeSeek(int milliseconds);
     private static native boolean nativeClassInit();
@@ -82,6 +85,7 @@ public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, O
         ImageButton play = (ImageButton) this.findViewById(R.id.button_play);
         play.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                nativeSetPipeline("rtspsrc protocols=4 location=rtsp://172.16.0.21:9021/h264/ch1/main/av_stream user-id=admin user-pw=12345 latency=0 drop-on-latency=1 ! decodebin ! videoconvert ! autovideosink");
                 nativePlay();
             }
         });

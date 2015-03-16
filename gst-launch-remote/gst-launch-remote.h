@@ -70,5 +70,6 @@ void              gst_launch_remote_play              (GstLaunchRemote * self);
 void              gst_launch_remote_pause             (GstLaunchRemote * self);
 void              gst_launch_remote_seek              (GstLaunchRemote * self, gint position);
 void              gst_launch_remote_set_window_handle (GstLaunchRemote * self, guintptr handle);
+void              gst_launch_remote_call_set_pipeline (GstLaunchRemote * self, const gchar * pipeline_string);
 
 #endif

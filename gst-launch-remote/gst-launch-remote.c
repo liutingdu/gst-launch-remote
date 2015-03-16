@@ -28,7 +28,7 @@ GST_DEBUG_CATEGORY_STATIC (debug_category);
 #define GST_CAT_DEFAULT debug_category
 
 static void gst_launch_remote_set_pipeline (GstLaunchRemote * self,
-    const gchar * pipeline_string);
+   const gchar * pipeline_string);
 
 G_LOCK_DEFINE_STATIC (debug_sockets);
 typedef struct
@@ -925,6 +925,12 @@ gst_launch_remote_free (GstLaunchRemote * self)
   g_main_loop_quit (self->main_loop);
   g_thread_join (self->thread);
   g_slice_free (GstLaunchRemote, self);
+}
+
+void
+gst_launch_remote_call_set_pipeline(GstLaunchRemote * self, const gchar * pipeline_string)
+{
+	gst_launch_remote_set_pipeline (self, pipeline_string);
 }
 
 void

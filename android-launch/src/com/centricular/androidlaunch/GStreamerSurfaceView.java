@@ -18,7 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-package com.centricular.android_launch;
+package com.centricular.androidlaunch;
 
 import android.content.Context;
 import android.util.AttributeSet;

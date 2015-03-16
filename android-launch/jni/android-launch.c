@@ -205,6 +205,19 @@ android_launch_finalize (JNIEnv * env, jobject thiz)
   GST_DEBUG ("Done finalizing");
 }
 
+void
+Java_com_centricular_androidlaunch_AndroidLaunch_nativeSetPipeline(JNIEnv * env, jobject thiz, jstring pipeline)
+{
+	  AndroidLaunch *app = GET_CUSTOM_DATA (env, thiz, app_data_field_id);
+
+	  if (!app)
+	    return;
+
+	  const char* p_pipeline = (*env)->GetStringUTFChars(env, pipeline, 0);
+
+	  gst_launch_remote_call_set_pipeline (app->launch, p_pipeline);
+}
+
 static void
 android_launch_play (JNIEnv * env, jobject thiz)
 {
@@ -329,7 +342,7 @@ JNI_OnLoad (JavaVM * vm, void *reserved)
     return 0;
   }
   jclass klass =
-      (*env)->FindClass (env, "com/centricular/android_launch/AndroidLaunch");
+      (*env)->FindClass (env, "com/centricular/androidlaunch/AndroidLaunch");
   (*env)->RegisterNatives (env, klass, native_methods,
       G_N_ELEMENTS (native_methods));
 
