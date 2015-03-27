@@ -20,12 +20,15 @@
 
 package com.centricular.androidlaunch;
 
+import java.io.File;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -34,6 +37,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -53,8 +57,12 @@ public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, O
     private static native boolean nativeClassInit();
     private native void nativeSurfaceInit(Object surface);
     private native void nativeSurfaceFinalize();
+    private final String TAG = "androidLaunch";
     private long native_app_data;
     private PowerManager.WakeLock wake_lock;
+    private Bitmap mSnapshotBitmap;
+    private ImageView mSnapshotImageView;
+    private SurfaceView sv;
 
     static {
         System.loadLibrary("gstreamer_android");
@@ -66,7 +74,6 @@ public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, O
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         try {
             GStreamer.init(this);
         } catch (Exception e) {
@@ -76,6 +83,8 @@ public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, O
         }
 
         setContentView(R.layout.main);
+        
+        sv = (SurfaceView) this.findViewById(R.id.surface_video);
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "Android Launch");
@@ -83,21 +92,41 @@ public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, O
         wake_lock.acquire();
 
         ImageButton play = (ImageButton) this.findViewById(R.id.button_play);
-        play.setOnClickListener(new OnClickListener() {
+        play.setOnClickListener(new OnClickListener() 
+        {
             public void onClick(View v) {
+            	 File folder = new File("/sdcard/evercam");
+                 if(!folder.exists())
+                 {
+                     folder.mkdirs();
+                 }
+                 
                 nativeSetPipeline("rtspsrc protocols=4 location=rtsp://172.16.0.21:9021/h264/ch1/main/av_stream user-id=admin user-pw=12345 latency=0 drop-on-latency=1 ! decodebin ! videoconvert ! autovideosink");
+                //latency=0 drop-on-latency=1 ! decodebin ! videoconvert ! autovideosink
+                //latency=0 drop-on-latency=1 ! decodebin ! tee name=t ! queue !  videoconvert ! autovideosink t. ! queue ! jpegenc ! filesink location=/sdcard/evercam/capture_tee.jpeg
+                //jpegenc ! multifilesink location=/sdcard/evercam/capture_multi.jpeg max-files=1
                 nativePlay();
             }
         });
 
         ImageButton pause = (ImageButton) this.findViewById(R.id.button_pause);
-        pause.setOnClickListener(new OnClickListener() {
+        pause.setOnClickListener(new OnClickListener() 
+        {
             public void onClick(View v) {
                 nativePause();
             }
         });
+        
+        ImageButton save = (ImageButton) this.findViewById(R.id.button_save);
+        save.setOnClickListener(new OnClickListener() 
+        {
+            public void onClick(View v) 
+            {
+            	mSnapshotImageView = (ImageView) findViewById(R.id.snapshot_image_view);
+            	//TODO: Take a snapshot and show it in image view
+            }
+        });
 
-        SurfaceView sv = (SurfaceView) this.findViewById(R.id.surface_video);
         SurfaceHolder sh = sv.getHolder();
         sh.addCallback(this);
 
