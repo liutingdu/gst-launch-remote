@@ -45,8 +45,6 @@ import android.widget.Toast;
 
 import org.freedesktop.gstreamer.GStreamer;
 
-import com.centricular.androidlaunch.R;
-
 public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, OnSeekBarChangeListener {
     private native void nativeInit();
     private native void nativeFinalize();
@@ -102,9 +100,9 @@ public class AndroidLaunch extends Activity implements SurfaceHolder.Callback, O
                  }
                  
                 nativeSetPipeline("rtspsrc protocols=4 location=rtsp://172.16.0.21:9021/h264/ch1/main/av_stream user-id=admin user-pw=12345 latency=0 drop-on-latency=1 ! decodebin ! videoconvert ! autovideosink");
-                //latency=0 drop-on-latency=1 ! decodebin ! videoconvert ! autovideosink
                 //latency=0 drop-on-latency=1 ! decodebin ! tee name=t ! queue !  videoconvert ! autovideosink t. ! queue ! jpegenc ! filesink location=/sdcard/evercam/capture_tee.jpeg
                 //jpegenc ! multifilesink location=/sdcard/evercam/capture_multi.jpeg max-files=1
+                //videoconvert ! sel. videotestsrc ! sel. input-selector name=sel ! tee name=tee1 tee1. ! queue ! autovideosink tee1. ! queue ! intervideosink async=true name=intervideosink_snapshot channel=snapshot
                 nativePlay();
             }
         });
